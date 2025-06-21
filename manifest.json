@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "NexyTab",
+  "version": "1.0",
+  "description": "Click the toolbar icon to switch to the next tab in your Firefox window.",
+  "permissions": ["tabs"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Switch to next tab",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "96": "icons/icon96.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icons/icon48.png",
+    "96": "icons/icon96.png",
+    "128": "icons/icon128.png"
+  }
+}
