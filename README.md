@@ -1,41 +1,56 @@
 # NexyTab
 
-**NexyTab** is a lightweight Firefox extension designed to streamline tab navigation. With a single click on the toolbar icon, it cycles to the next open tab in the current browser window.
+NexyTab is a minimal, fast browser extension designed to help you manage tabs more efficiently. Whether you're monitoring dashboards, logs, or real-time data across multiple tabs, NexyTab lets you stay focused and switch with ease.
 
 ## Features
 
-- Instantly switches to the next tab when the extension icon is clicked  
-- Helps prevent accidental tab closures caused by manual tab switching  
-- Recommended to pin the extension icon to the toolbar for easy access  
-- Especially useful for users who repeatedly monitor content across multiple tabs
+- Navigate to the previous or next tab with a single click  
+- Instantly refresh the current tab  
+- Lightweight popup with a clean and responsive interface  
+- Built using modern WebExtension APIs  
+- Recommended for users who monitor content across multiple tabs
+
+Tip: Pin NexyTab to your browser toolbar for easy access.
 
 ## Installation
 
-1. Download or clone this repository.
-2. Open Firefox and navigate to `about:debugging`.
-3. Click on **This Firefox**.
-4. Click **Load Temporary Add-on** and select the `manifest.json` file.
+### Chrome or Edge
 
-Here’s **Part 3: Folder Structure and Usage**
+1. Download the latest release or clone this repository  
+2. Go to `chrome://extensions/` and enable Developer Mode  
+3. Click Load unpacked and select the extension folder
+
+### Firefox
+
+1. Open `about:debugging` in the address bar  
+2. Click "This Firefox" (or "This Nightly")  
+3. Click "Load Temporary Add-on"  
+4. Locate and select the `manifest.json` file from the project folder
+
+## Usage
+
+1. Click the NexyTab icon in your toolbar  
+2. Use the left and right arrow buttons to navigate between tabs  
+3. Click the refresh button to reload the current tab
+
+No configuration required.
 
 ## Folder Structure
 
 ```
 NexyTab/
-├── manifest.json
-├── background.js
+├── icons/             # All icon sizes (16x16 to 512x512)
+├── popup.html         # Extension popup interface
+├── popup.js           # Logic for tab switching and refreshing
+└── manifest.json      # Metadata and permissions
 ```
 
-## Usage
+## Permissions
 
-Once loaded and pinned, simply click the NexyTab icon in your toolbar to move to the next tab in your window.
+NexyTab requests only the `tabs` permission to read tab information and change active tabs.
 
-## Development Notes
-
-- Built using the WebExtensions API  
-- Designed for modern Firefox versions  
-- No user data is stored or collected  
+No tracking. No data collection.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
