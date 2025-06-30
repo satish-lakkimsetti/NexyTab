@@ -2,6 +2,8 @@
 
 NexyTab is a minimal, fast browser extension designed to help you manage tabs more efficiently. Whether you're monitoring dashboards, logs or real-time data across multiple tabs, NexyTab lets you stay focused and switch with ease.
 
+---
+
 ## Features
 
 - Navigate to the previous or next tab with a single click  
@@ -11,6 +13,8 @@ NexyTab is a minimal, fast browser extension designed to help you manage tabs mo
 - Recommended for users who monitor content across multiple tabs
 
 Tip: Pin NexyTab to your browser toolbar for easy access.
+
+---
 
 ## Installation
 
@@ -30,6 +34,8 @@ Tip: Pin NexyTab to your browser toolbar for easy access.
 You can also install NexyTab directly from the Firefox Add-ons store:  
 [https://addons.mozilla.org/en-US/firefox/addon/nexytab/](https://addons.mozilla.org/en-US/firefox/addon/nexytab/)
 
+---
+
 ## Usage
 
 1. Click the NexyTab icon in your toolbar  
@@ -37,6 +43,8 @@ You can also install NexyTab directly from the Firefox Add-ons store:
 3. Click the refresh button to reload the current tab
 
 No configuration required.
+
+---
 
 ## Folder Structure
 
@@ -48,12 +56,18 @@ NexyTab/
 └── manifest.json      # Metadata and permissions
 ```
 
+---
+
 ## Permissions
 
 NexyTab requests only the `tabs` permission to read tab information and change active tabs.
 
 No tracking. No data collection.
 
+---
+
 ## License
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
