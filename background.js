@@ -1,14 +1,10 @@
-// Listener for when the user clicks the browser action icon (toolbar button)
 chrome.browserAction.onClicked.addListener(() => {
-  // Query all tabs in the current window
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
-    // Find the index of the currently active tab
+    if (!tabs || tabs.length === 0) return;
+
     const activeIndex = tabs.findIndex(tab => tab.active);
+    const nextTab = tabs[(activeIndex + 1) % tabs.length];
 
-    // Calculate the index of the next tab (wraps around to 0 if at the end)
-    const nextIndex = (activeIndex + 1) % tabs.length;
-
-    // Switch focus to the next tab
-    chrome.tabs.update(tabs[nextIndex].id, { active: true });
+    nextTab?.id && chrome.tabs.update(nextTab.id, { active: true });
   });
 });
