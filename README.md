@@ -24,10 +24,6 @@ Here’s **Part 3: Folder Structure and Usage**
 NexyTab/
 ├── manifest.json
 ├── background.js
-├── icons/
-│   ├── icon48.png
-│   ├── icon96.png
-│   └── icon128.png
 ```
 
 ## Usage
