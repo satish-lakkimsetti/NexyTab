@@ -7,7 +7,7 @@ NexyTab is a minimal, fast browser extension designed to help you manage tabs mo
 ## Features
 
 - Navigate to the previous or next tab with a single click  
-- Instantly refresh the current tab  
+- Instantly refresh the current tab or all tabs
 - Lightweight popup with a clean and responsive interface  
 - Built using modern WebExtension APIs  
 - Recommended for users who monitor content across multiple tabs
@@ -52,6 +52,7 @@ No configuration required.
 NexyTab/
 ├── icons/             # All icon sizes (16x16 to 512x512)
 ├── popup.html         # Extension popup interface
+├── popup.css         # Styles for the popup interface
 ├── popup.js           # Logic for tab switching and refreshing
 └── manifest.json      # Metadata and permissions
 ```
@@ -71,3 +72,4 @@ No tracking. No data collection.
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
+
