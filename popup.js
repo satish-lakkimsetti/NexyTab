@@ -19,3 +19,9 @@ document.getElementById('refresh').addEventListener('click', () => {
     if (tabs.length > 0) chrome.tabs.reload(tabs[0].id);
   });
 });
+
+document.getElementById('reload-all').addEventListener('click', () => {
+  chrome.tabs.query({ currentWindow: true }, (tabs) => {
+    tabs.forEach(tab => chrome.tabs.reload(tab.id));
+  });
+});

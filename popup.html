@@ -3,65 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <title>NexyTab Controls</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 6px;
-      background: #f9f9f9;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
-    button {
-      width: 40px;
-      height: 40px;
-      margin: 0 6px;
-      border: none;
-      border-radius: 50%;
-      background: #4285f4;
-      color: white;
-      padding: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      transition: background 0.2s ease;
-    }
-    button:hover {
-      background: #3367d6;
-    }
-    svg {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
-      pointer-events: none;
-    }
-  </style>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <button id="left" title="Previous Tab">
-    <svg viewBox="0 0 24 24">
-      <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-    </svg>
-  </button>
-
-  <button id="refresh" title="Reload Tab">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 6V3L8 7l4 4V8a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z" />
-    </svg>
-  </button>
-
-  <button id="right" title="Next Tab">
-    <svg viewBox="0 0 24 24">
-      <path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" />
-    </svg>
-  </button>
-
+  <div class="button-group">
+    <button id="left" title="Previous Tab">
+      <svg viewBox="0 0 24 24">
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <button id="refresh" title="Reload Tab">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 6V3L8 7l4 4V8a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6z" />
+      </svg>
+    </button>
+    <button id="right" title="Next Tab">
+      <svg viewBox="0 0 24 24">
+        <path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+      </svg>
+    </button>
+  </div>
+  <div class="reload-all-container">
+    <button id="reload-all">RELOAD ALL TABS</button>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>
