@@ -41,6 +41,7 @@ You can also install NexyTab directly from the Firefox Add-ons store:
 1. Click the NexyTab icon in your toolbar  
 2. Use the left and right arrow buttons to navigate between tabs  
 3. Click the refresh button to reload the current tab
+4. Click the RELOAD ALL TABS button to reload all the tabs
 
 No configuration required.
 
@@ -72,4 +73,5 @@ No tracking. No data collection.
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
+
 
