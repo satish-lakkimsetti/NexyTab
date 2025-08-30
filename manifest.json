@@ -19,6 +19,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
+      "id": "nexytab@satish.dev",
       "strict_min_version": "109.0"
     }
   }
