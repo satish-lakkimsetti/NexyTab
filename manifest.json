@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "NexyTab",
-  "version": "3.0",
-  "description": "Quickly switch, refresh, and navigate tabs from a lightweight popup.",
+  "version": "5.0",
+  "description": "Navigate, reload, and auto-rotate your tabs from a simple control panel.",
   "permissions": ["tabs"],
   "action": {
     "default_popup": "popup.html",
