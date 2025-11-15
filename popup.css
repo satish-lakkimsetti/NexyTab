@@ -13,30 +13,32 @@ body {
   height: 100%;
 }
 
+/* Base styles for ALL buttons */
 button {
   width: 32px;
   height: 32px;
-  margin: 0 3px;
+  margin: 0;
   border: none;
-  border-radius: 50%;
-  background: #4285f4;
-  color: white;
+  background: transparent;
+  color: white; /* Default white icon color */
   padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease;
+  flex-shrink: 0; 
 }
 
-button:hover {
+/* Hover for blue/green buttons */
+#reload:hover, #left:hover, #play-pause:hover, #right:hover {
   background: #3367d6;
 }
 
 svg {
   width: 16px;
   height: 16px;
-  fill: currentColor;
+  fill: currentColor; /* Uses the parent's color */
   pointer-events: none;
 }
 
@@ -45,12 +47,56 @@ svg {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  padding: 0 6px;
+}
+
+/* --- Main Control Button Styles --- */
+#reload, #left, #play-pause, #right {
+  background: #4285f4;
+  border-radius: 50%;
+  margin: 0 3px; /* This creates the 6px gap */
 }
 
 #reload {
   background: #34a853;
 }
-
 #reload:hover {
   background: #2c8c46;
+}
+
+/* --- Violet Time Stepper Styles --- */
+
+#time-display {
+  font-family: 'Roboto Mono', monospace; /* Terminal font */
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff; /* White text */
+  min-width: 36px;
+  text-align: center;
+  padding: 0 5px;
+  height: 32px;
+  line-height: 32px; /* Vertically center text */
+  background: #673AB7; /* Violet background */
+}
+
+/* Stepper buttons: - and + */
+#time-decrease, #time-increase {
+  background: #673AB7; /* Violet background */
+  color: #ffffff; /* White icon */
+}
+
+/* Make the gap uniform */
+#time-decrease {
+  margin-left: 6px; 
+  border-radius: 16px 0 0 16px; /* Left semi-circle */
+}
+
+#time-increase {
+  border-radius: 0 16px 16px 0; /* Right semi-circle */
+}
+
+/* Stepper button hover */
+#time-decrease:hover, #time-increase:hover {
+  background: #512DA8; /* Darker violet */
 }

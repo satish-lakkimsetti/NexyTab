@@ -4,30 +4,45 @@
   <meta charset="UTF-8" />
   <title>NexyTab Controls</title>
   <link rel="stylesheet" href="popup.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+  
   <div class="button-group">
+    
     <button id="reload" title="Reload All Tabs">
       <svg viewBox="0 0 24 24">
         <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
       </svg>
     </button>
-
     <button id="left" title="Previous Tab">
       <svg viewBox="0 0 24 24">
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
       </svg>
     </button>
-
-    <button id="play-pause" title="Start rotating tabs (10s)">
+    <button id="play-pause" title="Start rotating tabs">
       <svg viewBox="0 0 24 24">
         <path d="M8 5v14l11-7z" />
       </svg>
     </button>
-
     <button id="right" title="Next Tab">
       <svg viewBox="0 0 24 24">
         <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+      </svg>
+    </button>
+
+    <button id="time-decrease" title="Decrease time">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 13H5v-2h14v2z"/>
+      </svg>
+    </button>
+    <output id="time-display">1s</output>
+    <button id="time-increase" title="Increase time">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
       </svg>
     </button>
   </div>

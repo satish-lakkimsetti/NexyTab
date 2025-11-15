@@ -1,12 +1,19 @@
 {
   "manifest_version": 3,
   "name": "NexyTab",
-  "version": "5.0",
+  "version": "5.1",
   "description": "Navigate, reload, and auto-rotate your tabs from a simple control panel.",
-  "permissions": ["tabs"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "NexyTab Controls"
+  },
+  "background": {
+    "scripts": ["background.js"]
   },
   "icons": {
     "16": "icons/icon-16.png",

@@ -1,9 +1,26 @@
+// --- Get DOM Elements ---
+const playPauseBtn = document.getElementById('play-pause');
+const reloadBtn = document.getElementById('reload');
+const leftBtn = document.getElementById('left');
+const rightBtn = document.getElementById('right');
+const timeDisplay = document.getElementById('time-display');
+const timeDecreaseBtn = document.getElementById('time-decrease');
+const timeIncreaseBtn = document.getElementById('time-increase');
+
+// --- State Variables ---
+let currentRotationTime = 1;
+let isPlaying = false; // This is the local UI state
+
+// --- Reusable Functions ---
+
+// Reloads all tabs in the current window
 function reloadAllTabs() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     tabs.forEach(tab => chrome.tabs.reload(tab.id));
   });
 }
 
+// Switches to the previous tab
 function goToPreviousTab() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     const index = tabs.findIndex(tab => tab.active);
@@ -12,6 +29,7 @@ function goToPreviousTab() {
   });
 }
 
+// Switches to the next tab
 function goToNextTab() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     if (tabs.length <= 1) {
@@ -23,25 +41,110 @@ function goToNextTab() {
   });
 }
 
-const playPauseBtn = document.getElementById('play-pause');
-let isPlaying = false;
-let rotationInterval = null;
+// --- UI Update Functions ---
 
-document.getElementById('reload').addEventListener('click', reloadAllTabs);
-document.getElementById('left').addEventListener('click', goToPreviousTab);
-document.getElementById('right').addEventListener('click', goToNextTab);
-
-playPauseBtn.addEventListener('click', () => {
-  isPlaying = !isPlaying;
-
-  if (isPlaying) {
-    rotationInterval = setInterval(goToNextTab, 10000); 
-    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-    playPauseBtn.title = "Stop Rotating Tabs";
-  } else {
-    clearInterval(rotationInterval);
-    rotationInterval = null;
-    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
-    playPauseBtn.title = "Start rotating tabs (10s)";
+// Updates the "1s" text and the play button's tooltip
+function updateDisplay(seconds) {
+  timeDisplay.textContent = `${seconds}s`;
+  if (!isPlaying) {
+    playPauseBtn.title = `Start rotating tabs (${seconds}s)`;
   }
+}
+
+// Toggles the Play/Pause icon and title
+function updateButtonUI(isPlayingState) {
+  isPlaying = isPlayingState;
+  if (isPlaying) {
+    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    playPauseBtn.title = "Stop rotating tabs";
+  } else {
+    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    updateDisplay(currentRotationTime);
+  }
+}
+
+// --- NEW FUNCTION to stop rotation ---
+// This is called when any other button is pressed
+function forceStopRotation() {
+  if (isPlaying) {
+    // Send message to stop the background alarm
+    chrome.runtime.sendMessage({ action: "toggleRotation", time: currentRotationTime }, (response) => {
+      if (response) {
+        updateButtonUI(response.isPlaying); // This will be 'false'
+      }
+    });
+  }
+}
+
+// --- Event Listeners ---
+
+// 1. Other Buttons (MODIFIED to stop rotation)
+reloadBtn.addEventListener('click', () => {
+  forceStopRotation();
+  reloadAllTabs();
+});
+
+leftBtn.addEventListener('click', () => {
+  forceStopRotation();
+  goToPreviousTab();
+});
+
+rightBtn.addEventListener('click', () => {
+  forceStopRotation();
+  goToNextTab();
+});
+
+// 2. Play/Pause Button
+playPauseBtn.addEventListener('click', () => {
+  // Sends a message to the background script to start/stop the alarm
+  chrome.runtime.sendMessage(
+    { action: "toggleRotation", time: currentRotationTime },
+    (response) => {
+      if (response) {
+        updateButtonUI(response.isPlaying);
+        // Only run goToNextTab if we are starting to play
+        if (response.isPlaying) {
+          goToNextTab(); 
+        }
+      }
+    }
+  );
+});
+
+// 3. Time Stepper Buttons (MODIFIED to stop rotation)
+timeDecreaseBtn.addEventListener('click', () => {
+  forceStopRotation();
+  if (currentRotationTime > 1) { // Min 1 second
+    currentRotationTime--;
+    updateDisplay(currentRotationTime);
+    chrome.storage.local.set({ rotationTime: currentRotationTime });
+  }
+});
+
+timeIncreaseBtn.addEventListener('click', () => {
+  forceStopRotation();
+  if (currentRotationTime < 30) { // Max 30 seconds
+    currentRotationTime++;
+    updateDisplay(currentRotationTime);
+    chrome.storage.local.set({ rotationTime: currentRotationTime });
+  }
+});
+
+// 4. On Popup Open
+// This syncs the UI with the saved state
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Get the saved time from local storage
+  chrome.storage.local.get(['rotationTime'], (result) => {
+    const savedTime = result.rotationTime || 1;
+    currentRotationTime = savedTime;
+    
+    // 2. Get the current play/pause state from the background script
+    chrome.runtime.sendMessage({ action: "getState" }, (response) => {
+      if (response) {
+        updateButtonUI(response.isPlaying);
+      }
+      // 3. Update the text display
+      updateDisplay(currentRotationTime); 
+    });
+  });
 });
