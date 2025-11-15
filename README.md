@@ -25,10 +25,11 @@ This extension is unavailable for Chromium based browsers because of unexpected 
 
 ### Firefox
 
-1.  Open `about:debugging` in the address bar.
-2.  Click "This Firefox" (or "This Nightly").
-3.  Click "Load Temporary Add-on".
-4.  Locate and select the `manifest.json` file from the project folder.
+1.  Clone this repo.
+2.  Open `about:debugging` in the address bar.
+3.  Click "This Firefox" (or "This Nightly").
+4.  Click "Load Temporary Add-on".
+5.  Locate and select the `manifest.json` file from the project folder.
 
 You can also install the original version from the Firefox Add-ons store:
 [https://addons.mozilla.org/en-US/firefox/addon/nexyTab/](https://addons.mozilla.org/en-US/firefox/addon/nexyTab/)
@@ -78,4 +79,5 @@ No tracking. No data collection.
 
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
