@@ -21,9 +21,7 @@ Tip: Pin NexyTab to your browser toolbar for easy access.
 
 ### Chrome or Edge
 
-1.  Download the latest release or clone this repository.
-2.  Go to `chrome://extensions/` and enable Developer Mode.
-3.  Click "Load unpacked" and select the extension folder.
+This extension is unavailable for Chromium bases browsers because of unexpected issues.
 
 ### Firefox
 
@@ -77,5 +75,6 @@ No tracking. No data collection.
 ---
 
 ## License
+
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
