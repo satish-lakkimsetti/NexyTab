@@ -21,7 +21,7 @@ Tip: Pin NexyTab to your browser toolbar for easy access.
 
 ### Chrome or Edge
 
-This extension is unavailable for Chromium bases browsers because of unexpected issues.
+This extension is unavailable for Chromium based browsers because of unexpected issues.
 
 ### Firefox
 
@@ -78,3 +78,4 @@ No tracking. No data collection.
 
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+
