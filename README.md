@@ -19,10 +19,6 @@ Tip: Pin NexyTab to your browser toolbar for easy access.
 
 ## Installation
 
-### Chrome or Edge
-
-This extension is unavailable for Chromium based browsers because of unexpected issues.
-
 ### Firefox
 
 1.  Clone this repo.
@@ -79,5 +75,6 @@ No tracking. No data collection.
 
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 
