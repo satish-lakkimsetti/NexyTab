@@ -1,19 +1,21 @@
+/* --- Base Styles --- */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 6px;
-  background: #404040;
+  background: #404040; /* Dark Grey Background */
   font-family: sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
+  /* min-width removed to let content define width */
 }
 
-/* Base styles for ALL buttons */
+/* --- Generic Button Styles --- */
 button {
   width: 32px;
   height: 32px;
@@ -30,18 +32,20 @@ button {
   flex-shrink: 0; 
 }
 
-/* Hover for blue/green buttons */
+/* Default hover effect for standard buttons */
 #reload:hover, #left:hover, #play-pause:hover, #right:hover {
   background: #3367d6;
 }
 
+/* SVG Icon Sizing */
 svg {
   width: 16px;
   height: 16px;
-  fill: currentColor; /* Uses the parent's color */
+  fill: currentColor; /* Uses the parent button's text color */
   pointer-events: none;
 }
 
+/* --- Layout Container --- */
 .button-group {
   display: flex;
   flex-direction: row;
@@ -51,24 +55,26 @@ svg {
   padding: 0 6px;
 }
 
-/* --- Main Control Button Styles --- */
+/* --- Main Control Button Colors (Green & Blue) --- */
 #reload, #left, #play-pause, #right {
-  background: #4285f4;
+  background: #4285f4; /* Material Blue */
   border-radius: 50%;
-  margin: 0 3px; /* This creates the 6px gap */
+  margin: 0 3px; /* Creates the 6px gap between buttons */
 }
 
+/* Special styling for the Reload button */
 #reload {
-  background: #34a853;
+  background: #34a853; /* Material Green */
 }
 #reload:hover {
-  background: #2c8c46;
+  background: #2c8c46; /* Darker Green on hover */
 }
 
-/* --- Violet Time Stepper Styles --- */
+/* --- Time Stepper Styles (Violet) --- */
 
+/* The central time display text */
 #time-display {
-  font-family: 'Roboto Mono', monospace; /* Terminal font */
+  font-family: 'Roboto Mono', monospace; /* Terminal-style font */
   font-size: 14px;
   font-weight: bold;
   color: #ffffff; /* White text */
@@ -80,23 +86,24 @@ svg {
   background: #673AB7; /* Violet background */
 }
 
-/* Stepper buttons: - and + */
+/* Stepper buttons: (-) and (+) */
 #time-decrease, #time-increase {
   background: #673AB7; /* Violet background */
   color: #ffffff; /* White icon */
 }
 
-/* Make the gap uniform */
+/* Styling for the Left Button (-) */
 #time-decrease {
-  margin-left: 6px; 
+  margin-left: 6px; /* Gap between "Next Tab" and stepper */
   border-radius: 16px 0 0 16px; /* Left semi-circle */
 }
 
+/* Styling for the Right Button (+) */
 #time-increase {
   border-radius: 0 16px 16px 0; /* Right semi-circle */
 }
 
-/* Stepper button hover */
+/* Hover effect for the stepper buttons */
 #time-decrease:hover, #time-increase:hover {
   background: #512DA8; /* Darker violet */
 }

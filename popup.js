@@ -9,15 +9,13 @@ const timeIncreaseBtn = document.getElementById('time-increase');
 
 // --- State Variables ---
 let currentRotationTime = 1;
-let isPlaying = false; // This is the local UI state
+let isPlaying = false; 
 
 // --- Reusable Functions ---
 
-// Reloads all tabs in the current window
+// OPTIMIZED: Now offloads the heavy lifting to background.js
 function reloadAllTabs() {
-  chrome.tabs.query({ currentWindow: true }, (tabs) => {
-    tabs.forEach(tab => chrome.tabs.reload(tab.id));
-  });
+  chrome.runtime.sendMessage({ action: "reloadAllTabs" });
 }
 
 // Switches to the previous tab
@@ -63,14 +61,14 @@ function updateButtonUI(isPlayingState) {
   }
 }
 
-// --- NEW FUNCTION to stop rotation ---
-// This is called when any other button is pressed
+// --- Function to stop rotation ---
+// Called when user manually interacts with tabs or timer
 function forceStopRotation() {
   if (isPlaying) {
     // Send message to stop the background alarm
     chrome.runtime.sendMessage({ action: "toggleRotation", time: currentRotationTime }, (response) => {
       if (response) {
-        updateButtonUI(response.isPlaying); // This will be 'false'
+        updateButtonUI(response.isPlaying); // Update UI to "Pause"
       }
     });
   }
@@ -78,7 +76,7 @@ function forceStopRotation() {
 
 // --- Event Listeners ---
 
-// 1. Other Buttons (MODIFIED to stop rotation)
+// 1. Other Buttons (Now stops rotation first)
 reloadBtn.addEventListener('click', () => {
   forceStopRotation();
   reloadAllTabs();
@@ -102,16 +100,12 @@ playPauseBtn.addEventListener('click', () => {
     (response) => {
       if (response) {
         updateButtonUI(response.isPlaying);
-        // Only run goToNextTab if we are starting to play
-        if (response.isPlaying) {
-          goToNextTab(); 
-        }
       }
     }
   );
 });
 
-// 3. Time Stepper Buttons (MODIFIED to stop rotation)
+// 3. Time Stepper Buttons (Stops rotation on change)
 timeDecreaseBtn.addEventListener('click', () => {
   forceStopRotation();
   if (currentRotationTime > 1) { // Min 1 second
@@ -131,7 +125,7 @@ timeIncreaseBtn.addEventListener('click', () => {
 });
 
 // 4. On Popup Open
-// This syncs the UI with the saved state
+// This syncs the UI with the saved state from background & storage
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Get the saved time from local storage
   chrome.storage.local.get(['rotationTime'], (result) => {

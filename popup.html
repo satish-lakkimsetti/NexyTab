@@ -5,14 +5,17 @@
   <title>NexyTab Controls</title>
   <link rel="stylesheet" href="popup.css">
   
+  <!-- Import the terminal-style font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
   
+  <!-- All controls are in a single flex-box group -->
   <div class="button-group">
     
+    <!-- Main control buttons -->
     <button id="reload" title="Reload All Tabs">
       <svg viewBox="0 0 24 24">
         <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
@@ -34,6 +37,7 @@
       </svg>
     </button>
 
+    <!-- Time Stepper controls -->
     <button id="time-decrease" title="Decrease time">
       <svg viewBox="0 0 24 24">
         <path d="M19 13H5v-2h14v2z"/>
