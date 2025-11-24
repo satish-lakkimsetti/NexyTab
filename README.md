@@ -1,4 +1,4 @@
-# NexyTab
+# NexyTab-Firefox
 
 NexyTab is a minimal, fast browser extension designed to help you manage and monitor tabs. It allows you to switch with ease, or start a **persistent, configurable tab rotation** that runs in the background.
 
@@ -75,6 +75,7 @@ No tracking. No data collection.
 
 
 This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 
 
