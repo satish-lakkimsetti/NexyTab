@@ -12,7 +12,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
-  /* min-width removed to let content define width */
+  /* Increased width to fit all controls comfortably */
+  min-width: 420px; 
 }
 
 /* --- Generic Button Styles --- */
@@ -28,12 +29,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, opacity 0.2s ease;
   flex-shrink: 0; 
+  /* Default to round */
+  border-radius: 50%;
 }
 
 /* Default hover effect for standard buttons */
-#reload:hover, #left:hover, #play-pause:hover, #right:hover {
+#reload:hover, #left:hover, #play-pause:hover, #right:hover, #reload-current:hover, #random:hover {
   background: #3367d6;
 }
 
@@ -53,57 +56,155 @@ svg {
   align-items: center;
   width: 100%;
   padding: 0 6px;
+  gap: 6px; /* Uniform spacing */
 }
 
-/* --- Main Control Button Colors (Green & Blue) --- */
-#reload, #left, #play-pause, #right {
+/* --- Main Control Button Colors (Blue) --- */
+#left, #play-pause, #right {
   background: #4285f4; /* Material Blue */
   border-radius: 50%;
-  margin: 0 3px; /* Creates the 6px gap between buttons */
 }
 
-/* Special styling for the Reload button */
+/* --- Special Action Buttons --- */
+
+/* Tab Sleeping Toggle (Switch Style) */
+#sleep-toggle-container {
+  width: 86px; 
+  height: 32px; 
+  background: #2a2a2a; /* Dark track when inactive */
+  border-radius: 16px; 
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+  /* Align text vertically */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The ON/OFF Text */
+#sleep-toggle-text {
+  /* MATCHED TO TIME STEPPER: */
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  
+  color: #9e9e9e; /* Dim text when OFF */
+  position: absolute;
+  
+  /* OFF Position (Right side) */
+  right: 10px; 
+  top: 0;
+  line-height: 32px; /* Vertically center */
+  
+  pointer-events: none; 
+  transition: color 0.3s ease;
+}
+
+#sleep-toggle-thumb {
+  width: 28px;
+  height: 28px;
+  background: #757575; /* Inactive thumb color */
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px; /* Start at left */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  z-index: 2; /* Sit above text */
+}
+
+#sleep-toggle-thumb svg {
+  fill: #1a1a1a; 
+  width: 14px;
+  height: 14px;
+}
+
+/* Active State (Class added by JS) */
+#sleep-toggle-container.active {
+  background: #673AB7; /* Deep Purple track (Active) */
+}
+
+#sleep-toggle-container.active #sleep-toggle-thumb {
+  transform: translateX(54px); /* Slide to right */
+  background: #ffffff; /* White active thumb */
+}
+
+#sleep-toggle-container.active #sleep-toggle-thumb svg {
+  fill: #673AB7; 
+}
+
+/* Active Text State */
+#sleep-toggle-container.active #sleep-toggle-text {
+  /* Move text to Left side when ON */
+  right: auto;
+  left: 10px;
+  color: #ffffff; /* Bright white text */
+}
+
+/* Random Tab (Green) */
+#random {
+  background: #34a853; /* Material Green */
+  border-radius: 50%;
+}
+#random:hover {
+  background: #2c8c46; 
+}
+
+/* Reload All Tabs (Green) */
 #reload {
   background: #34a853; /* Material Green */
+  border-radius: 50%;
 }
 #reload:hover {
-  background: #2c8c46; /* Darker Green on hover */
+  background: #2c8c46; 
+}
+
+/* Reload Current Tab (Orange) */
+#reload-current {
+  background: #FF9800; /* Material Orange */
+  border-radius: 50%;
+}
+#reload-current:hover {
+  background: #F57C00; 
 }
 
 /* --- Time Stepper Styles (Violet) --- */
 
-/* The central time display text */
+.time-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #673AB7; 
+  border-radius: 16px; 
+  height: 32px;
+  overflow: hidden; 
+}
+
 #time-display {
-  font-family: 'Roboto Mono', monospace; /* Terminal-style font */
+  font-family: 'Roboto Mono', monospace; 
   font-size: 14px;
   font-weight: bold;
-  color: #ffffff; /* White text */
-  min-width: 36px;
+  color: #ffffff;
+  min-width: 30px;
   text-align: center;
-  padding: 0 5px;
-  height: 32px;
-  line-height: 32px; /* Vertically center text */
-  background: #673AB7; /* Violet background */
+  padding: 0 4px;
+  line-height: 32px;
+  background: transparent; 
 }
 
-/* Stepper buttons: (-) and (+) */
 #time-decrease, #time-increase {
-  background: #673AB7; /* Violet background */
-  color: #ffffff; /* White icon */
+  background: transparent; 
+  color: #ffffff;
+  width: 28px;
+  border-radius: 0;
+  margin: 0;
 }
 
-/* Styling for the Left Button (-) */
-#time-decrease {
-  margin-left: 6px; /* Gap between "Next Tab" and stepper */
-  border-radius: 16px 0 0 16px; /* Left semi-circle */
-}
-
-/* Styling for the Right Button (+) */
-#time-increase {
-  border-radius: 0 16px 16px 0; /* Right semi-circle */
-}
-
-/* Hover effect for the stepper buttons */
 #time-decrease:hover, #time-increase:hover {
-  background: #512DA8; /* Darker violet */
+  background: rgba(255, 255, 255, 0.2); 
 }
