@@ -4,7 +4,20 @@ const ALARM_NAME = 'tabRotationAlarm';
 let isRotationInProgress = false;
 let lastExecutionTime = 0;
 
-// Note: We removed the isPopupOpen check so rotation continues even when the extension is open.
+// SETTINGS CACHE
+let cachedSleepEnabled = false;
+
+// Initialize cache on load
+browser.storage.local.get(['sleepEnabled']).then((result) => {
+  cachedSleepEnabled = result.sleepEnabled || false;
+});
+
+// Update cache whenever the user toggles the button
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.sleepEnabled) {
+    cachedSleepEnabled = changes.sleepEnabled.newValue;
+  }
+});
 
 /**
  * Logic to switch to the next tab AND optionally discard the old one.
@@ -24,6 +37,15 @@ async function rotateToNextTab() {
   isRotationInProgress = true;
 
   try {
+    // Get the current window details to check if minimized
+    const currentWindow = await browser.windows.getCurrent();
+    
+    // OPTIMIZATION: If window is minimized, skip rotation to save RAM/CPU
+    if (currentWindow.state === 'minimized') {
+      isRotationInProgress = false;
+      return;
+    }
+
     const tabs = await browser.tabs.query({ currentWindow: true });
     
     if (!tabs || tabs.length <= 1) {
@@ -31,32 +53,43 @@ async function rotateToNextTab() {
       return;
     }
 
-    let activeIndex = -1;
-    for (let i = 0; i < tabs.length; i++) {
-      if (tabs[i].active) {
-        activeIndex = i;
-        break;
+    // Efficiently find active index
+    const activeIndex = tabs.findIndex(t => t.active);
+    if (activeIndex === -1) return;
+
+    const nextIndex = (activeIndex + 1) % tabs.length;
+    const previousTabId = tabs[activeIndex].id; // The tab we are leaving
+    const nextTabId = tabs[nextIndex].id;       // The tab we are going to
+    
+    // --- STEP 1: Switch to the new tab ---
+    await browser.tabs.update(nextTabId, { active: true });
+
+    // --- STEP 2: Preload the UPCOMING 5 tabs ---
+    const preloadCount = Math.min(5, tabs.length - 1);
+
+    for (let i = 1; i <= preloadCount; i++) {
+      const futureIndex = (nextIndex + i) % tabs.length;
+      const futureTab = tabs[futureIndex];
+
+      if (futureTab.id === nextTabId) continue;
+
+      // Don't preload if we are about to discard it
+      if (cachedSleepEnabled && futureTab.id === previousTabId) continue;
+
+      // Only reload if currently sleeping
+      if (futureTab.discarded) {
+        browser.tabs.reload(futureTab.id).catch(() => {});
       }
     }
 
-    if (activeIndex !== -1) {
-      const nextIndex = (activeIndex + 1) % tabs.length;
-      const previousTabId = tabs[activeIndex].id; // The tab we are leaving
-      const nextTabId = tabs[nextIndex].id;       // The tab we are going to
-      
-      // STEP 1: Switch to the new tab FIRST
-      await browser.tabs.update(nextTabId, { active: true });
-
-      // STEP 2: Discard the OLD tab (if enabled)
-      const settings = await browser.storage.local.get(['sleepEnabled']);
-      
-      if (settings.sleepEnabled) {
-        setTimeout(() => {
-          browser.tabs.discard(previousTabId).catch((err) => {
-             console.log("Tab discard skipped:", err);
-          });
-        }, 500);
-      }
+    // --- STEP 3: Discard the OLD tab ---
+    // Uses the cached value for better performance
+    if (cachedSleepEnabled) {
+      setTimeout(() => {
+        browser.tabs.discard(previousTabId).catch((err) => {
+            // Ignore errors (e.g., if tab was closed)
+        });
+      }, 500);
     }
     
   } catch (error) {
@@ -94,6 +127,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 });
 
 function createOrUpdateAlarm(timeInSeconds) {
+  // Enforce minimum 5s interval for stability
+  if (timeInSeconds < 5) timeInSeconds = 5;
+
   const periodInMinutes = timeInSeconds / 60; 
   chrome.alarms.clear(ALARM_NAME, () => {
     chrome.alarms.create(ALARM_NAME, {

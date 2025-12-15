@@ -12,8 +12,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
-  /* Increased width to fit all controls comfortably */
-  min-width: 420px; 
+  min-width: 360px; /* Reduced width for tighter layout */
 }
 
 /* --- Generic Button Styles --- */
@@ -36,7 +35,7 @@ button {
 }
 
 /* Default hover effect for standard buttons */
-#reload:hover, #left:hover, #play-pause:hover, #right:hover, #reload-current:hover, #random:hover {
+#reload-all:hover, #left:hover, #play-pause:hover, #right:hover, #reload-current:hover, #random:hover, #sleep-toggle:hover {
   background: #3367d6;
 }
 
@@ -55,8 +54,8 @@ svg {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 0 6px;
-  gap: 6px; /* Uniform spacing */
+  padding: 0 5px; /* Updated edge padding */
+  gap: 5px; /* Updated gap between buttons */
 }
 
 /* --- Main Control Button Colors (Blue) --- */
@@ -67,83 +66,32 @@ svg {
 
 /* --- Special Action Buttons --- */
 
-/* Tab Sleeping Toggle (Switch Style) */
-#sleep-toggle-container {
-  width: 86px; 
-  height: 32px; 
-  background: #2a2a2a; /* Dark track when inactive */
-  border-radius: 16px; 
-  cursor: pointer;
-  position: relative;
-  transition: background 0.3s ease;
-  flex-shrink: 0;
-  /* Align text vertically */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* The ON/OFF Text */
-#sleep-toggle-text {
-  /* MATCHED TO TIME STEPPER: */
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
-  font-weight: bold;
-  
-  color: #9e9e9e; /* Dim text when OFF */
-  position: absolute;
-  
-  /* OFF Position (Right side) */
-  right: 10px; 
-  top: 0;
-  line-height: 32px; /* Vertically center */
-  
-  pointer-events: none; 
-  transition: color 0.3s ease;
-}
-
-#sleep-toggle-thumb {
-  width: 28px;
-  height: 28px;
-  background: #757575; /* Inactive thumb color */
+/* Tab Sleeping Toggle (Button) */
+#sleep-toggle {
+  background: #757575; /* DEFAULT: Grey (OFF) */
   border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px; /* Start at left */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  z-index: 2; /* Sit above text */
+  color: white; /* Icon is white */
+  opacity: 1.0; 
 }
 
-#sleep-toggle-thumb svg {
-  fill: #1a1a1a; 
-  width: 14px;
-  height: 14px;
+/* Active State (Yellow, White Icon) */
+#sleep-toggle.active {
+  background: #FF9800; /* Material Orange (ON) - Matches Reload All */
+  color: white; /* Keep icon white explicitly */
+  box-shadow: none; 
 }
 
-/* Active State (Class added by JS) */
-#sleep-toggle-container.active {
-  background: #673AB7; /* Deep Purple track (Active) */
+/* Ensure SVG fill is forced to white when active */
+#sleep-toggle.active svg {
+  fill: white;
 }
 
-#sleep-toggle-container.active #sleep-toggle-thumb {
-  transform: translateX(54px); /* Slide to right */
-  background: #ffffff; /* White active thumb */
+/* Hover States */
+#sleep-toggle:hover {
+  background: #9e9e9e; /* Lighter Grey on hover */
 }
-
-#sleep-toggle-container.active #sleep-toggle-thumb svg {
-  fill: #673AB7; 
-}
-
-/* Active Text State */
-#sleep-toggle-container.active #sleep-toggle-text {
-  /* Move text to Left side when ON */
-  right: auto;
-  left: 10px;
-  color: #ffffff; /* Bright white text */
+#sleep-toggle.active:hover {
+  background: #F57C00; /* Darker Orange on hover */
 }
 
 /* Random Tab (Green) */
@@ -155,21 +103,21 @@ svg {
   background: #2c8c46; 
 }
 
-/* Reload All Tabs (Green) */
-#reload {
+/* Reload Current Tab (Green) */
+#reload-current {
   background: #34a853; /* Material Green */
   border-radius: 50%;
 }
-#reload:hover {
+#reload-current:hover {
   background: #2c8c46; 
 }
 
-/* Reload Current Tab (Orange) */
-#reload-current {
+/* Reload All Tabs (Orange) */
+#reload-all {
   background: #FF9800; /* Material Orange */
   border-radius: 50%;
 }
-#reload-current:hover {
+#reload-all:hover {
   background: #F57C00; 
 }
 

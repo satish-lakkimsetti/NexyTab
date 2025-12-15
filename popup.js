@@ -1,39 +1,37 @@
 // --- CONNECTION HANDSHAKE ---
-// Establishes a long-lived connection to the background script.
-// This allows the background to know when the popup is open,
-// which can be useful for pausing rotation or other state management.
 chrome.runtime.connect({ name: "popup-connection" });
 
 // --- Get DOM Elements ---
-const playPauseBtn = document.getElementById('play-pause');
-const reloadBtn = document.getElementById('reload');
-const reloadCurrentBtn = document.getElementById('reload-current');
-const leftBtn = document.getElementById('left');
-const rightBtn = document.getElementById('right');
-const randomBtn = document.getElementById('random');
-
-// Sleep Toggle Elements
-const sleepToggleContainer = document.getElementById('sleep-toggle-container'); 
-const sleepToggleText = document.getElementById('sleep-toggle-text'); 
-
-// Time Stepper Elements
-const timeDisplay = document.getElementById('time-display');
-const timeDecreaseBtn = document.getElementById('time-decrease');
-const timeIncreaseBtn = document.getElementById('time-increase');
+const elements = {
+  reloadAll: document.getElementById('reload-all'),
+  random: document.getElementById('random'),
+  left: document.getElementById('left'),
+  playPause: document.getElementById('play-pause'),
+  right: document.getElementById('right'),
+  reloadCurrent: document.getElementById('reload-current'),
+  sleepToggle: document.getElementById('sleep-toggle'),
+  timeDisplay: document.getElementById('time-display'),
+  timeDecrease: document.getElementById('time-decrease'),
+  timeIncrease: document.getElementById('time-increase')
+};
 
 // --- State Variables ---
-let currentRotationTime = 1;
+let currentRotationTime = 5; // Default: 5 seconds (Minimum)
 let isPlaying = false; 
 let isSleepEnabled = false; 
 
-// --- Reusable Navigation Functions ---
+// --- Core Functions ---
 
-// Reloads all tabs via background script (staggered to save RAM)
+// Helper: wrapper to stop rotation before performing manual actions
+function handleUserAction(actionCallback) {
+  forceStopRotation();
+  if (actionCallback) actionCallback();
+}
+
 function reloadAllTabs() {
   chrome.runtime.sendMessage({ action: "reloadAllTabs" });
 }
 
-// Reloads just the active tab
 function reloadCurrentTab() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
@@ -42,28 +40,19 @@ function reloadCurrentTab() {
   });
 }
 
-// Switches to the previous tab
-function goToPreviousTab() {
+// Optimized: Single function for Next (1) and Previous (-1)
+function cycleTab(direction) {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
+    if (tabs.length <= 1) return;
+    
     const index = tabs.findIndex(tab => tab.active);
-    const prevIndex = (index - 1 + tabs.length) % tabs.length;
-    chrome.tabs.update(tabs[prevIndex].id, { active: true });
-  });
-}
-
-// Switches to the next tab
-function goToNextTab() {
-  chrome.tabs.query({ currentWindow: true }, (tabs) => {
-    if (tabs.length <= 1) {
-      return;
-    }
-    const index = tabs.findIndex(tab => tab.active);
-    const nextIndex = (index + 1) % tabs.length;
+    // Calculate next index with wrap-around
+    const nextIndex = (index + direction + tabs.length) % tabs.length;
+    
     chrome.tabs.update(tabs[nextIndex].id, { active: true });
   });
 }
 
-// Switches to a random tab
 function goToRandomTab() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     if (tabs.length <= 1) return;
@@ -71,8 +60,7 @@ function goToRandomTab() {
     const activeTabIndex = tabs.findIndex(t => t.active);
     let nextIndex = activeTabIndex;
     
-    // Attempt to find a different tab (try 10 times)
-    // This prevents picking the same tab we are already on.
+    // Attempt to pick a different tab
     let attempts = 0;
     while (nextIndex === activeTabIndex && attempts < 10) {
       nextIndex = Math.floor(Math.random() * tabs.length);
@@ -85,50 +73,42 @@ function goToRandomTab() {
 
 // --- UI Update Functions ---
 
-// Updates the time display text (e.g., "5s")
 function updateDisplay(seconds) {
-  timeDisplay.textContent = `${seconds}s`;
+  elements.timeDisplay.textContent = `${seconds}s`;
   if (!isPlaying) {
-    playPauseBtn.title = `Start rotating tabs (${seconds}s)`;
+    elements.playPause.title = `Start Rotating Tabs (${seconds}s)`;
   }
 }
 
-// Toggles the Play/Pause icon based on state
 function updateButtonUI(isPlayingState) {
   isPlaying = isPlayingState;
   if (isPlaying) {
-    // Pause Icon
-    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-    playPauseBtn.title = "Stop rotating tabs";
+    elements.playPause.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    elements.playPause.title = "Stop Rotating Tabs"; 
   } else {
-    // Play Icon
-    playPauseBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+    elements.playPause.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
     updateDisplay(currentRotationTime);
   }
 }
 
-// Updates the Sleep Toggle Switch (Visuals & Text)
 function updateSleepToggleUI(enabled) {
   isSleepEnabled = enabled;
+  const btn = elements.sleepToggle;
   
-  // Update Accessibility State
-  sleepToggleContainer.setAttribute('aria-checked', enabled);
-  
+  btn.setAttribute('aria-checked', enabled);
   if (isSleepEnabled) {
-    sleepToggleContainer.classList.add('active'); 
-    sleepToggleText.textContent = "ON"; 
-    sleepToggleContainer.title = "Turn off Tab Sleeping during rotation (experimental)";
+    btn.classList.add('active'); 
+    btn.title = "Tab Sleeping - ON"; 
   } else {
-    sleepToggleContainer.classList.remove('active'); 
-    sleepToggleText.textContent = "OFF"; 
-    sleepToggleContainer.title = "Turn on Tab Sleeping during rotation (experimental)";
+    btn.classList.remove('active'); 
+    btn.title = "Tab Sleeping - OFF"; 
   }
 }
 
-// Stops rotation if user interacts manually with other controls
 function forceStopRotation() {
   if (isPlaying) {
     chrome.runtime.sendMessage({ action: "toggleRotation", time: currentRotationTime }, (response) => {
+      if (chrome.runtime.lastError) return; // Handle connection errors silently
       if (response) {
         updateButtonUI(response.isPlaying); 
       }
@@ -136,46 +116,33 @@ function forceStopRotation() {
   }
 }
 
+// Helper to safely update time
+function updateTime(newTime) {
+  if (newTime >= 5 && newTime <= 30) {
+    handleUserAction(); // Stop rotation when changing settings
+    currentRotationTime = newTime;
+    updateDisplay(currentRotationTime);
+    chrome.storage.local.set({ rotationTime: currentRotationTime });
+  }
+}
+
 // --- Event Listeners ---
 
-reloadBtn.addEventListener('click', () => {
-  forceStopRotation();
-  reloadAllTabs();
-});
+// 1. Reload All
+elements.reloadAll.addEventListener('click', () => handleUserAction(reloadAllTabs));
 
-reloadCurrentBtn.addEventListener('click', () => {
-  forceStopRotation();
-  reloadCurrentTab();
-});
+// 2. Random Tab
+elements.random.addEventListener('click', () => handleUserAction(goToRandomTab));
 
-leftBtn.addEventListener('click', () => {
-  forceStopRotation();
-  goToPreviousTab();
-});
+// 3. Previous Tab
+elements.left.addEventListener('click', () => handleUserAction(() => cycleTab(-1)));
 
-rightBtn.addEventListener('click', () => {
-  forceStopRotation();
-  goToNextTab();
-});
-
-randomBtn.addEventListener('click', () => {
-  forceStopRotation();
-  goToRandomTab();
-});
-
-// Tab Sleeping Toggle Click Handler
-sleepToggleContainer.addEventListener('click', () => {
-  const newState = !isSleepEnabled;
-  updateSleepToggleUI(newState);
-  // Save to storage so background.js can access it during rotation
-  chrome.storage.local.set({ sleepEnabled: newState });
-});
-
-// Play/Pause Click Handler
-playPauseBtn.addEventListener('click', () => {
+// 4. Play/Pause (Direct logic, no wrapper)
+elements.playPause.addEventListener('click', () => {
   chrome.runtime.sendMessage(
     { action: "toggleRotation", time: currentRotationTime },
     (response) => {
+      if (chrome.runtime.lastError) return;
       if (response) {
         updateButtonUI(response.isPlaying);
       }
@@ -183,40 +150,38 @@ playPauseBtn.addEventListener('click', () => {
   );
 });
 
-// Time Decrease
-timeDecreaseBtn.addEventListener('click', () => {
-  forceStopRotation();
-  if (currentRotationTime > 1) { 
-    currentRotationTime--;
-    updateDisplay(currentRotationTime);
-    chrome.storage.local.set({ rotationTime: currentRotationTime });
-  }
+// 5. Next Tab
+elements.right.addEventListener('click', () => handleUserAction(() => cycleTab(1)));
+
+// 6. Reload Current
+elements.reloadCurrent.addEventListener('click', () => handleUserAction(reloadCurrentTab));
+
+// 7. Sleep Toggle
+elements.sleepToggle.addEventListener('click', () => {
+  const newState = !isSleepEnabled;
+  updateSleepToggleUI(newState);
+  chrome.storage.local.set({ sleepEnabled: newState });
 });
 
-// Time Increase
-timeIncreaseBtn.addEventListener('click', () => {
-  forceStopRotation();
-  if (currentRotationTime < 30) { 
-    currentRotationTime++;
-    updateDisplay(currentRotationTime);
-    chrome.storage.local.set({ rotationTime: currentRotationTime });
-  }
-});
+// 8. Time Stepper
+elements.timeDecrease.addEventListener('click', () => updateTime(currentRotationTime - 1));
+elements.timeIncrease.addEventListener('click', () => updateTime(currentRotationTime + 1));
 
-// --- Initialization on Popup Open ---
+// --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-  // Load ALL saved settings from storage
   chrome.storage.local.get(['rotationTime', 'sleepEnabled'], (result) => {
-    // 1. Restore Time
-    const savedTime = result.rotationTime || 1;
+    // Validate saved time (min 5s)
+    let savedTime = result.rotationTime || 5;
+    if (savedTime < 5) savedTime = 5;
     currentRotationTime = savedTime;
     
-    // 2. Restore Sleep Toggle
+    // Restore sleep state
     const savedSleepState = result.sleepEnabled || false;
     updateSleepToggleUI(savedSleepState);
     
-    // 3. Get Play/Pause State from Background
+    // Sync state with background
     chrome.runtime.sendMessage({ action: "getState" }, (response) => {
+      if (chrome.runtime.lastError) return;
       if (response) {
         updateButtonUI(response.isPlaying);
       }
